@@ -1,0 +1,133 @@
+/* Estilização do Container Principal */
+.cadastro-aluno {
+    max-width: 1500px;
+    margin: 40px auto;
+    padding: 35px;
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Título */
+.cadastro-aluno h1 {
+    color: #2c3e50;
+    font-size: 1.75rem;
+    margin-bottom: 25px;
+    padding-bottom: 12px;
+    border-bottom: 3px solid #e67e22; /* Cor diferente para diferenciar de Atividades */
+    text-align: center;
+}
+
+/* Labels */
+.cadastro-aluno label {
+    display: block;
+    margin-top: 18px;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #4b5e71;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Inputs */
+.cadastro-aluno input,select {
+    width: 100%;
+    border: #e67e22;
+    padding: 12px 15px;
+    border: 2px solid #edeff2;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #2d3436;
+    background-color: #fdfdfd;
+    transition: all 0.3s ease;
+    box-sizing: border-box; /* Garante que o padding não quebre a largura */
+}
+
+/* Foco no Input */
+.cadastro-aluno input:focus {
+    outline: none;
+    border-color: #e67e22;
+    background-color: #fff;
+    box-shadow: 0 0 0 4px rgba(230, 126, 34, 0.1);
+}
+
+/* Estilo para o campo de Atipicidade (destaque) */
+#atipicidade {
+    border-left: 4px solid #e74c3c;
+}
+.cadastro-aluno sele
+/* Botão de Cadastrar */
+.cadastro-aluno button {
+    width: 100%;
+    margin-top: 35px;
+    padding: 16px;
+    background-color: #e67e22;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.1s;
+}
+
+
+
+.cadastro-aluno button:active {
+    transform: scale(0.98);
+}
+/* Container da Tabela para manter o padrão de largura e sombra */
+.table-container {
+    margin-top: 40px;
+    overflow-x: auto; /* Permite scroll horizontal em telas pequenas */
+    position:sticky;
+}
+
+.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    font-size: 0.9rem;
+}
+
+.custom-table th, .custom-table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+
+.custom-table th {
+    background-color: #34495e;
+    color: white;
+    white-space: nowrap;
+}
+
+.custom-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.custom-table tr:hover {
+    background-color: #ebf5fb;
+}
+
+/* Botões de Ação na Tabela */
+.custom-table button {
+    padding: 5px 10px;
+    margin-right: 5px;
+    font-size: 0.8rem;
+    grid-column: auto; /* Reseta o span do grid para botões da tabela */
+}
+
+/* Responsividade para Celulares */
+@media (max-width: 768px) {
+    .cadastro-aluno form {
+        grid-template-columns: 1fr;
+    }
+    .cadastro-aluno h1, 
+    .cadastro-aluno button {
+        grid-column: span 1;
+    }
+}

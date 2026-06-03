@@ -1,0 +1,64 @@
+.header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #002046; /* Tom escuro profissional */
+    padding: 15px 0;
+    gap: 30px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header a {
+    text-decoration: none;
+    color: #ecf0f1;
+    font-weight: 600;
+    font-size: 1.1rem;
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    border-bottom: 3px solid transparent;
+}
+
+/* Estilo específico para o link de Alunos (Laranja) */
+.header a[href="/"] {
+    border: 3px solid #e67e22;
+}
+
+.header a[href="/"]:hover {
+    background-color: rgba(230, 126, 34, 0.15);
+    color: #e67e22;
+}
+
+/* Estilo específico para o link de Atividades (Azul) */
+.header a[href="/cadastrar-ativ"] {
+    border: 3px solid #3498db;
+}
+
+.header a[href="/cadastrar-ativ"]:hover {
+    background-color: rgba(52, 152, 219, 0.15);
+    color: #3498db;
+}
+
+.header a[href="/atendimentos"] {
+    border: 3px solid purple;
+}
+.header a[href="/atendimentos"]:hover {
+    background-color: rgba(52, 152, 219, 0.15);
+    color: purple;
+}
+
+/* Efeito de "ativo" (opcional, se quiser destacar o link da página atual) */
+.header a:active {
+    transform: scale(0.95);
+}
+
+@media (max-width: 480px) {
+    .header {
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px;
+    }
+}

@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model url{
+  url String @db.VarChar(9999) @id
+  vai_ser_usado String @db.VarChar(3)
+  @@map("url")
+}
+
+model Aluno {
+  id               Int     @id @default(autoincrement())
+  nome             String  @db.VarChar(200)
+  turno            String  @db.VarChar(10)
+  idade            Int
+  data_nasc        String  @db.VarChar(10)
+  responsavel      String  @db.VarChar(200)
+  contato          String  @db.VarChar(17)
+  unidade          String  @db.VarChar(200)
+  endereco_moradia String  @db.VarChar(200)
+  nis_crianca      String? @db.VarChar(12)
+  nis_mae          String? @db.VarChar(12)
+  atipicidade      String? @db.VarChar(200)
+
+  @@map("alunos")
+}
+
+model Atividades {
+  id             Int      @id @default(autoincrement())
+  atividade      String []
+  dia            String   @db.VarChar(20)
+  horario        String   @db.VarChar(5)
+  hora_lanche    String?  @db.VarChar(5)
+  grupo          String   @db.VarChar(8)
+  sera_dividido  Boolean
+  alunos         Json []
+  tempo_acolhida String?  @db.VarChar(14)
+  resp_acolhida  String?  @db.VarChar(200)
+  tempo_lanche   String?  @db.VarChar(14)
+  resp_lanche    String?  @db.VarChar(200)
+  tempo_saida    String?  @db.VarChar(14)
+  resp_saida     String?  @db.VarChar(200)
+
+  @@map("atividades")
+}
+
+model FimSemestre{
+  fim_semestre String @db.VarChar(10) @id @unique
+  @@map("fim_sem")
+}
+
+model Atendimentos{
+  id            Int @id @default(autoincrement())
+  atividade     String @db.VarChar(200)
+  qtd_atendidos Int
+  @@map("atendimentos")
+}

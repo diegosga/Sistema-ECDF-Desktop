@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Carregando Sistema...</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #ffffff; color: #1b2127; display: flex; justify-content: center; align-items: center; height: 80vh; }
+    .container { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 400px; }
+    button { padding: 10px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+    button:hover { background: #27ae60; }
+    .path-display { background: #74777f; color: white; padding: 10px; border-radius: 4px; font-family: monospace; word-break: break-all; min-height: 20px; text-align: center; }
+    .hidden { display: none !important; }
+    .loader { font-size: 18px; text-align: center; color: #9aa0a6; }
+  </style>
+</head>
+<body>
+
+  <div id="status-screen" class="loader">
+    <p>Verificando se algum arquivo foi enviado...</p>
+  </div>
+
+  <div id="upload-screen" class="container hidden">
+    <p style="color: #3d4348; font-size: 20px; text-align: center; margin-top: 0;">Gostaria de enviar alguma planilha do excel?</p>
+    
+    <label for="opt">
+    <input type="radio" name="opt" value="Sim"/>Sim
+  </label>
+    
+    <label for="opt">
+    <input type="radio" name="opt" value="Não" checked/>Não
+  </label>
+  <p id="parag" style="color: #3d4348; font-size: 20px; text-align: center; margin-top: 0;">Em qual caminho a planilha deve ser criada?</p>
+  <button id="select-btn">Selecionar Caminho</button>
+  <div id="file-path" class="path-display">Nenhum caminho selecionado</div>
+  <button id="prosseguir" style="background: #1e8e3e;" class = "button hidden">Iniciar Sistema</button>
+
+  </div>
+  <script src="./setup.js"></script>
+  
+</body>
+</html>
