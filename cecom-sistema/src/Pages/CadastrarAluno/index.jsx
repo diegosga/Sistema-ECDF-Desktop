@@ -95,7 +95,7 @@ function CadastrarAluno(){
         setNisC("");
         setNisM("");
         setResp("");
-        setTurno("");
+        setTurno("Matutino");
         setUnidade("");
     };
     

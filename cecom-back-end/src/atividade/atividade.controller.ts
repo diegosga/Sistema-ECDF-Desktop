@@ -28,5 +28,9 @@ export class AtividadeController {
         async delete(@Param("id") id:number){
             return this.AtividadeService.delete(Number(id));
         }
+        @Delete()
+        async deleteAll(){
+            return this.AtividadeService.deleteAll();
+        }
 
 }

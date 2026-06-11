@@ -149,15 +149,17 @@ export class AtividadeService {
             if(atividadeExiste){
                 traduzir(data,ativTraduzida);
                 traduzir(atividadeExiste,ativExisteTraduzida);
-                let i = 0
-                for(const item of dadoExcel){
-                    i++;
-                    if(item === ativExisteTraduzida) break;
-                    i++;
-                }
-                dadoExcel[i] = ativTraduzida;
+                
+                const novosDados = dadoExcel.map(linha => {
+                if(Object.keys(linha).every(campo => String(linha[campo]) === String(ativExisteTraduzida[campo]))){
+                        return {...linha, ...ativTraduzida};
+                    }else{
+                        return linha;
+                    }
+            });
+                
 
-                const novo_arquivo= XLSX.utils.json_to_sheet(dadoExcel);
+                const novo_arquivo= XLSX.utils.json_to_sheet(novosDados);
                 wb.Sheets[nome] = novo_arquivo;
                 XLSX.writeFile(wb, caminho_excel);
 
@@ -206,5 +208,8 @@ export class AtividadeService {
                 }
             );
         }
+        async deleteAll(){
+        return await this.prisma.atividades.deleteMany();
+    }
 
 }

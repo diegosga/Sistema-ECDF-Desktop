@@ -33,16 +33,10 @@ O que eu pensei, essa tela sobreposta vai enviar a data de fim do semestre para 
 
 O react vai verificar se a variável está vazia, se sim, mostra essa tela, se não, mostra a outra tela.
 
-
-
-
 */
-
-
- import { useEffect, useState } from "react";
-
+import { useEffect, useState } from "react";
+import "./index.css"; 
 function Atendimentos(){
-    
     const [ativ, setAtiv] = useState("ATIVIDADES DE ARTE EDUCAÇÃO");
     const [qtd, setQTD] = useState(0);
     const [dataFim, setDataFim] = useState('');
@@ -56,14 +50,15 @@ function Atendimentos(){
     const API_BASE = "http://localhost:3000";
 
 
-    const adicionarFim = async (novoDado) =>{
+
+
+const adicionarFim = async (novoDado) =>{
         try {
                 const response = await fetch(`${API_BASE}/fim-sem`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(novoDado),
+                    },body: JSON.stringify(novoDado),
                 });
                 if (!response.ok) {
                     const errorData = await response.json();
@@ -94,7 +89,6 @@ function Atendimentos(){
                 setEditFim(false);
                 await getData();
             }
-
         } catch (error) {
             console.error('Erro ao editar atendimento:', error);
             alert(`Erro ao editar atendimento: ${error.message}`);
@@ -248,37 +242,50 @@ function Atendimentos(){
     };
 
   return (
-    <div>
-        {!arr.length||editFim?(
-           <div>
-            <label htmlFor="dataFim">Digite a data do fim do semestre</label>
-            <input id="dataFim" type="date" value={dataFim} onChange={(e)=>setDataFim(e.target.value)}></input>
-            <button onClick={handleFim}>{editFim?"Salvar Edição":"Enviar"}</button>
-        </div>
-         ):(
-             <div>
-                <label htmlFor="atividade">Selecione a atividade que foi atendida</label>
-                <select id = "atividade" onChange={(e)=>setAtiv(e.target.value)}>
-                    <option value='ATIVIDADES DE ARTE EDUCAÇÃO'>ATIVIDADES DE ARTE EDUCAÇÃO</option>
-                    <option value='OFICINAS TEMATICAS REFLEXIVAS – EQUIPE PSI'>OFICINAS TEMATICAS REFLEXIVAS – EQUIPE PSI</option>
-                    <option value='OFICINA DE INCENTIVO A LEITURA'>OFICINA DE INCENTIVO A LEITURA</option>
-                    <option value='VIVÊNCIA TECNOLÓGICA'>VIVÊNCIA TECNOLÓGICA</option>
-                    <option value='A ESCOLA VEM AO CIRCO'>A ESCOLA VEM AO CIRCO</option>
-                    <option value='O CIRCO VAI A ESCOLA'>O CIRCO VAI A ESCOLA</option>
-                </select>
-                <label htmlFor="qtd">Digite a quantidade de atendimentos</label>
-                <input id="qtd" type="number" onChange={(e)=>setQTD(e.target.value)}></input>
-                <button onClick={handleSubmit}>{edit?"Salvar Edição":"Enviar"}</button>
-                <button onClick={editarData}>Editar fim do semestre</button>
-                <button>Ver atendimentos específicos</button>
-                <button>Ver todos os atendimentos</button>
-
+    <div class="atendimentos-container">
+        {!arr.length || editFim ? (
+           <div class="atendimentos-card">
+                <h2>Configurar Semestre</h2>
+                <div class="form-group">
+                    <label htmlFor="dataFim">Data de Encerramento do Semestre</label>
+                    <input id="dataFim" type="date" value={dataFim} onChange={(e)=>setDataFim(e.target.value)} />
+                </div>
+                <button class="btn-primary" onClick={handleFim}>{editFim ? "Salvar Edição" : "Enviar"}</button>
             </div>
-        
-    
-     )
-    }
+         ) : (
+             <div class="atendimentos-card">
+                <h2>Registro de Atendimentos</h2>
+                
+                <div class="form-group">
+                    <label htmlFor="atividade">Selecione a atividade atendida</label>
+                    <select id="atividade" value={ativ} onChange={(e)=>setAtiv(e.target.value)}>
+                        <option value='ATIVIDADES DE ARTE EDUCAÇÃO'>ATIVIDADES DE ARTE EDUCAÇÃO</option>
+                        <option value='OFICINAS TEMATICAS REFLEXIVAS – EQUIPE PSI'>OFICINAS TEMATICAS REFLEXIVAS – EQUIPE PSI</option>
+                        <option value='OFICINA DE INCENTIVO A LEITURA'>OFICINA DE INCENTIVO A LEITURA</option>
+                        <option value='VIVÊNCIA TECNOLÓGICA'>VIVÊNCIA TECNOLÓGICA</option>
+                        <option value='A ESCOLA VEM AO CIRCO'>A ESCOLA VEM AO CIRCO</option>
+                        <option value='O CIRCO VAI A ESCOLA'>O CIRCO VAI A ESCOLA</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label htmlFor="qtd">Quantidade de Atendimentos</label>
+                    <input id="qtd" type="number" value={qtd} onChange={(e)=>setQTD(e.target.value)} />
+                </div>
+
+                <div class="btn-container">
+                    <button class="btn-primary" onClick={handleSubmit}>{edit ? "Salvar Edição" : "Enviar"}</button>
+                    
+                    <div class="btn-grid">
+                        <button class="btn-secondary">Ver atendimentos específicos</button>
+                        <button class="btn-secondary">Ver todos os atendimentos</button>
+                        <button class="btn-secondary btn-danger" onClick={editarData}>Editar fim do semestre</button>
+                    </div>
+                </div>
+            </div>
+        )}
     </div>
-     )}
+  );
+}
 
 export default Atendimentos;

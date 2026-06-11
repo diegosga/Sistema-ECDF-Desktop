@@ -138,17 +138,22 @@ export class AlunoService {
         if(alunoExiste){
             traduzir(data, alunoTraduzido);
             traduzir(alunoExiste, alunoExisteTraduzido);
-            let i= 0;
-            for(const item of dadoExcel){
-                i++;
-                if(item ===alunoExisteTraduzido) break;
-                
-            }
-        dadoExcel[i] = alunoTraduzido;
-        const novo_arquivo= XLSX.utils.json_to_sheet(dadoExcel);
-        wb.Sheets[nome] = novo_arquivo;
-        XLSX.writeFile(wb, caminho_excel);
+            
+        
+        const novosDados = dadoExcel.map(linha => {
+                if(Object.keys(linha).every(campo => String(linha[campo]) === String(alunoExisteTraduzido[campo]))){
+                        return {...linha, ...alunoTraduzido};
+                    }else{
+                        return linha;
+                    }
+            });
 
+        const novo_arquivo= XLSX.utils.json_to_sheet(novosDados);
+        
+        wb.Sheets[nome] = novo_arquivo;
+        console.log(`Arquivos escritos com ${novosDados.values()}`);
+        XLSX.writeFile(wb, caminho_excel);
+        
         }else{
             throw new Error("Aluno não encontrado");
         }

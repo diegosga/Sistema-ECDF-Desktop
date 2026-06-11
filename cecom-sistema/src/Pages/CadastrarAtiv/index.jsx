@@ -516,8 +516,8 @@ function CadastrarAtiv(){
             <select id='grupos' value={grupo} onChange={(e)=>{
                 setGrupo(e.target.value);
                 }}required>
-                <option value='A - Mat' id='g_A'>Grupo A - Matutino</option>
-                <option value='B - Mat' id='g_B'>Grupo B - Matutino</option>
+                <option value='A' id='g_A'>Grupo A - Matutino</option>
+                <option value='B ' id='g_B'>Grupo B - Matutino</option>
                 <option value='A - Vesp' id='g_A'>Grupo A - Vespertino</option>
                 <option value='B - Vesp' id='g_B'>Grupo B - Vespertino</option>
             </select>

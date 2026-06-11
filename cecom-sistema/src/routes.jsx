@@ -10,6 +10,7 @@ export default function RoutesApp(){
             <Routes>
                 <Route path= "*" element={<CadastrarAluno/>}/>
                 <Route path='/cadastrar-ativ' element={<CadastrarAtiv/>}/>
+                <Route path="/atendimentos" element={<Atendimentos/>}/>
             </Routes>
 
         </HashRouter>
