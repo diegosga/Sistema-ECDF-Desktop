@@ -2,12 +2,33 @@ import { Injectable, InternalServerErrorException} from '@nestjs/common';
 import { AlunoDTO } from './dto/aluno.dto';
 import { PrismaService } from 'src/database/prisma.service';
 import { UrlService } from '../url/url.service';
+
 import * as XLSX from "xlsx";
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
+
+
 //teste
-let caminho_excel;
+let caminho_config = path.join(__dirname, '..', '..','..','..', 'dist-electron','config.json');
+let caminho_excel:string;
+
+
+const pegarValor = async ()=>{
+            if(fs.existsSync(caminho_config)){
+             const response = fs.readFileSync(caminho_config, 'utf-8');
+             const config = JSON.parse(response);
+             if(config){
+                    caminho_excel = config.url;
+                    return caminho_excel;
+                }
+             else{
+                console.log("caminho não encontrado")
+                
+            }
+            };
+           }
+
 
 const traduzir= (traduzido,traducao)=>{
     const colunas ={
@@ -36,33 +57,22 @@ const traduzir= (traduzido,traducao)=>{
 export class AlunoService {
 
     constructor (private prisma: PrismaService){
-        const pegarValor = async ()=>{
-
-             const response = await prisma.url.findFirst({
-                select:{
-                    url: true,
-                }
-             });
-             if(response!= null){
-                caminho_excel = response?.url;
-                return caminho_excel;
-             }
-             else{
-                console.log("caminho não encontrado")
-                
-            }
-            };
-            pegarValor().then((caminho_excel)=>{
-                if(caminho_excel){
-                    console.log(caminho_excel);
-                }
-            });
+        console.log(fs.existsSync(caminho_config));
+        if(fs.existsSync(caminho_config)){
+            pegarValor();
+}
+        
     }
     
     async create(data: AlunoDTO){
       if (!fs.existsSync(caminho_excel)) {
+        const response = fs.readFileSync(caminho_config, 'utf-8');
+        const config = JSON.parse(response);
+         console.log(config.url);
         throw new Error(`Arquivo não encontrado no caminho: ${caminho_excel}`);
+        
     }
+       
         const dadoExcel = {};
         const wb = XLSX.readFile(caminho_excel);
         const nome = wb.SheetNames[0];

@@ -19,7 +19,18 @@ function CadastrarAluno(){
     const [tabela,setTabela] = useState(false);
     const [edit, setEdit] = useState(false);
     const [id_edit,setIdEdit] = useState(null);
-    const [excel,setExcel] = useState([])
+    const [excel,setExcel] = useState([]);
+
+    const [termo, setTermo] = useState("");
+
+    const pesq = aluno.filter((obj) => {
+    if (termo === "") return true;
+    return Object.values(obj).some((valor) =>
+        String(valor).toLowerCase().includes(termo.toLowerCase())
+    );
+});
+
+
 
     const API_BASE = "http://localhost:3000";    
     XLSX.set_fs(fs);
@@ -247,8 +258,7 @@ function CadastrarAluno(){
 
     useEffect(()=>{
         getAlunos();
-        console.log(typeof data_nasc, data_nasc);
-    },[data_nasc]);
+    },[ termo]);
 
 
     
@@ -334,6 +344,9 @@ function CadastrarAluno(){
             {
                 tabela &&(
                 <div className="table-container">
+                    <input type="search" value={termo} onChange={e=>{
+                        setTermo(e.target.value);
+                    }} placeholder="Pesquisar..."></input>
                     <table className="custom-table">
                         <thead>
                             <tr>
@@ -351,7 +364,10 @@ function CadastrarAluno(){
                             </tr>
                         </thead>
                         <tbody>
-                            {aluno.map((aluno) => (
+                            
+                            {
+                            
+                            termo===""?aluno.map((aluno) => (
                                 <tr key={aluno.id}>
                                     <td>{aluno.nome}</td>
                                     <td>{aluno.turno}</td>
@@ -373,7 +389,29 @@ function CadastrarAluno(){
                                         </button>
                                     </td>
                                 </tr>
-                            ))}
+                                )):pesq.map(aluno=>(
+                                    <tr key={aluno.id}>
+                                    <td>{aluno.nome}</td>
+                                    <td>{aluno.turno}</td>
+                                    <td>{aluno.idade}</td>
+                                    <td>{aluno.data_nasc}</td>
+                                    <td>{aluno.responsavel}</td>
+                                    <td>{aluno.contato}</td>
+                                    <td>{aluno.unidade}</td>
+                                    <td>{aluno.endereco_moradia}</td>
+                                    <td>{aluno.nis_crianca}</td>
+                                    <td>{aluno.nis_mae}</td>
+                                    <td>{aluno.atipicidade}</td>
+                                    <td>
+                                        <button onClick={()=>{handleEditarClick(aluno)}}>
+                                            Editar
+                                        </button>
+                                        <button onClick={()=>removerAluno(aluno.id)}>
+                                            Remover
+                                        </button>
+                                    </td>
+                                </tr>
+                                ))}
                         </tbody>
                     </table>
                     </div>

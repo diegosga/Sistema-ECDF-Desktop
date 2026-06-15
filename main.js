@@ -2,12 +2,13 @@ const { app, BrowserWindow,ipcMain, dialog } = require('electron');
 const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
+const xlsx = require('xlsx');
 const { exec,fork } = require('child_process');
 let mainWindow;
 let backendProcess;
 const isProd = app.isPackaged;
 const caminho_env = path.join(__dirname,'.env');
-app.commandLine.appendSwitch('ignore-certificate-errors');
+
 function startBackend() {
    
         
@@ -47,7 +48,13 @@ function createWindow() {
       contextIsolation: true,
     },
   });
-
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show();
+    if (typeof setupWindow !== 'undefined' && setupWindow && !setupWindow.isDestroyed()) {
+      setupWindow.close();
+      setupWindow = null;
+    }
+  });
   
   if (isProd) {
     const frontendPath = path.join(__dirname, 'cecom-sistema/dist/index.html');
@@ -61,6 +68,7 @@ function createWindow() {
   mainWindow.on('closed', () => (mainWindow = null));
 
 }
+  
 
  function createSetupWindow() {
   setupWindow  = new BrowserWindow({
@@ -70,6 +78,7 @@ function createWindow() {
       preload: path.join(__dirname, "preload.js"),
       nodeIntegration: false,
       contextIsolation: true,
+      sandbox: false
     },
   });
 
@@ -83,7 +92,6 @@ process.on('uncaughtException', function (err) {
   ipcMain.on('bypass-setup-and-open-react', (event) => {
   console.log('[Electron] Banco de dados validado com sucesso. Abrindo interface principal.');
   createWindow();
-  if (setupWindow) setupWindow.close();
 });
 
 ipcMain.handle('open-file-dialog', async (event) => {
@@ -100,25 +108,111 @@ ipcMain.handle('open-file-dialog', async (event) => {
 ipcMain.on('process-initial-file', async (event,opt, filePath) => {
   console.log(`[Electron] Arquivo de carga inicial recebido: ${filePath}`);
 
-  const response = await fetch(`http://localhost:3000/url`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  url:filePath,
-                  vai_ser_usado:opt
-                }),
-            });
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Erro enviar o arquivo');
-            }else{
-              createWindow();
-            }
+  if(opt ==="Sim"){
+                const wb = xlsx.readFile(filePath);
+                const alunos = wb.SheetNames[0];
+                const ativ = wb.SheetNames[1];
+                const ws_alunos = wb.Sheets[alunos];
+                const ws_ativ = wb.Sheets[ativ];
+                const dados_alunos = xlsx.utils.sheet_to_json(ws_alunos);
+                const dados_ativ = xlsx.utils.sheet_to_json(ws_ativ);
 
-  
-  if (mainWindow) setupWindow.close();
+                const dadosF_aluno =  dados_alunos.map(item=>{
+                    return{
+                        nome: item["NOME DO EDUCANDO/A"],
+                        turno: item["TURNO NA ECDF"],
+                        idade: item["IDADE DO EDUCANDO/A"],
+                        data_nasc: item["DATA DE NASCIMENTO DO EDUCANDO/A"], 
+                        responsavel: item["RESPONSÁVEL PELO EDUCANDO/A"], 
+                        contato: item["CONTATO DO RESPONSÁVEL"],
+                        unidade: item["UNIDADE ESCOLAR (ONDE O EDUCANDO ESTUDA)"],
+                        endereco_moradia: item["ENDEREÇO DE MORADIA"],
+                        nis_crianca: item["Nº NIS CRIANÇA"],
+                        nis_mae: item["Nº NIS MÃE"],
+                        atipicidade: item["ATIPICIDADE (TEM NECESSIDADES ESPECIAIS)"]
+                    }
+                    
+                })
+                const dadosF_atividades = dados_ativ.map(item => {
+                        return {
+                            atividade: item["ATIVIDADES"],
+                            dia: item["DIA DA ATIVIDADE"],
+                            horario: item["HORARIO"],
+                            hora_lanche: item["HORARIO DO LANCHE"],
+                            grupo: item["GRUPO"],
+                            alunos: item["ALUNOS"],
+                            sera_dividido: item["DIVIDIDO"],
+                            tempo_acolhida: item["ACOLHER AO PORTÃO"],
+                            resp_acolhida: item["RESPONSÁVEL PELO ACOLHIMENTO"],
+                            tempo_lanche: item["ACOMPANHAR LANCHE"],
+                            resp_lanche: item["RESPONSAVEL PELO ACOMPANHAMENTO"],
+                            tempo_saida: item["ACOMPANHAR A SAÍDA"],
+                            resp_saida: item["RESPONSAVEL PELO ACOMPANHAMENTO"]
+                        }
+                    });
+                            await Promise.all(dadosF_aluno.map(async (aluno) => {
+                      await fetch(`http://localhost:3000/aluno`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(aluno),
+                      });
+                    }));
+
+                    await Promise.all(dadosF_atividades.map(async (ativ) => {
+                      await fetch(`http://localhost:3000/atividade`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(ativ),
+                      });
+                    }));
+                                          }
+                
+                else{
+                    const dadosAlunos = [[
+                                    "NOME DO EDUCANDO/A",
+                                    "TURNO NA ECDF",
+                                    "IDADE DO EDUCANDO/A",
+                                    "DATA DE NASCIMENTO DO EDUCANDO/A",
+                                    "RESPONSÁVEL PELO EDUCANDO/A",
+                                    "CONTATO DO RESPONSÁVEL",
+                                    "UNIDADE ESCOLAR (ONDE O EDUCANDO ESTUDA)",
+                                    "ENDEREÇO DE MORADIA",
+                                    "Nº NIS CRIANÇA",
+                                    "Nº NIS MÃE",
+                                    "ATIPICIDADE (TEM NECESSIDADES ESPECIAIS)"
+                                    ]];
+                    const dadosAtividades =[[
+                                                "ATIVIDADES",
+                                                "DIA DA ATIVIDADE",
+                                                "HORARIO",
+                                                "HORARIO DO LANCHE",
+                                                "GRUPO",
+                                                "ALUNOS",
+                                                "DIVIDIDO",
+                                                "ACOLHER AO PORTÃO",
+                                                "RESPONSÁVEL PELO ACOLHIMENTO",
+                                                "ACOMPANHAR LANCHE",
+                                                "RESPONSAVEL PELO ACOMPANHAMENTO",
+                                                "ACOMPANHAR A SAÍDA",
+                                                "RESPONSAVEL PELO ACOMPANHAMENTO"
+                                                ]];          
+                    const ws_alunos = xlsx.utils.aoa_to_sheet(dadosAlunos);
+                    const ws_ativ = xlsx.utils.aoa_to_sheet(dadosAtividades);
+                    const wb = xlsx.utils.book_new();
+                    xlsx.utils.book_append_sheet(wb,ws_alunos,"Alunos");
+                    xlsx.utils.book_append_sheet(wb,ws_ativ,"Atividades");
+                    const caminho_esp = path.join(filePath, "planilha_cecom.xlsx");
+                    xlsx.writeFile(wb, caminho_esp);
+                    filePath= caminho_esp;
+                }
+                app.addRecentDocument(filePath);
+                const cwd_config = path.join(__dirname,"dist-electron", "config.json");
+                const conteudo = JSON.stringify({url: filePath, vai_ser_usado: opt});
+                fs.writeFile(cwd_config, conteudo, (err)=>{
+                   if(err)throw new Error(err.message || 'Erro enviar o arquivo');
+                  createWindow();
+                });
+                if (mainWindow) setupWindow.close();
 });
    
 
@@ -129,10 +223,10 @@ app.whenReady().then(() => {
 });
 
 app.on('window-all-closed', () => {
-  if (backendProcess) backendProcess.kill();
+  backendProcess.kill();
   if (process.platform !== 'darwin') app.quit();
 });
 
 app.on('will-quit', () => {
-  if (backendProcess) backendProcess.kill();
+  backendProcess.kill();
 });

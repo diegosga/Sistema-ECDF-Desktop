@@ -44,8 +44,21 @@ function CadastrarAtiv(){
 
     const [tabela,setTabela] = useState(false);
     const API_BASE = "http://localhost:3000";
-    
-    
+    const [termo, setTermo] = useState("");
+
+    const pesqMat = ativMatutino.filter((obj) => {
+    if (termo === "") return true;
+    return Object.values(obj).some((valor) =>
+        String(valor).toLowerCase().includes(termo.toLowerCase())
+    );
+});
+    const pesqVesp = ativVesp.filter((obj) => {
+    if (termo === "") return true;
+    return Object.values(obj).some((valor) =>
+        String(valor).toLowerCase().includes(termo.toLowerCase())
+    );
+});
+
 
     const getAtiv = async () => {
         try {
@@ -227,8 +240,7 @@ function CadastrarAtiv(){
                     }
             );
             setAlunos(filtrados());
-            console.log(data);
-
+            
                 }  
                     
                 catch (error) {
@@ -237,7 +249,6 @@ function CadastrarAtiv(){
             };
             getAtiv();
             getAlunos();
-            
             
 }, [grupo,edit]);
     const limparForm = () => {
@@ -516,8 +527,8 @@ function CadastrarAtiv(){
             <select id='grupos' value={grupo} onChange={(e)=>{
                 setGrupo(e.target.value);
                 }}required>
-                <option value='A' id='g_A'>Grupo A - Matutino</option>
-                <option value='B ' id='g_B'>Grupo B - Matutino</option>
+                <option value='A - Mat' id='g_A'>Grupo A - Matutino</option>
+                <option value='B - Mat' id='g_B'>Grupo B - Matutino</option>
                 <option value='A - Vesp' id='g_A'>Grupo A - Vespertino</option>
                 <option value='B - Vesp' id='g_B'>Grupo B - Vespertino</option>
             </select>
@@ -629,6 +640,11 @@ function CadastrarAtiv(){
             }}>Abrir Tabela</button>
             {tabela && turno=== "Matutino" &&(
                 <div className="table-container">
+
+                    <input type="search" value={termo} onChange={e=>{
+                        setTermo(e.target.value);
+                    }} placeholder="Pesquisar..."></input>
+
                     <table className="custom-table">
                         <thead>
                             <tr>
@@ -648,7 +664,7 @@ function CadastrarAtiv(){
                             </tr>
                         </thead>
                         <tbody>
-                            {ativMatutino.map((ativARR) =>(
+                            {termo===""?ativMatutino.map((ativARR) =>(
                                 <tr key={ativARR.id}>
                                     <td><ul>{ativARR.atividade.map((ativ, index) => (
                                                 
@@ -687,7 +703,49 @@ function CadastrarAtiv(){
                                         </button>
                                     </td>
                                 </tr>
-                            ))}
+                            )
+                        ):pesqMat.map((ativARR) =>(
+                                <tr key={ativARR.id}>
+                                    <td><ul>{ativARR.atividade.map((ativ, index) => (
+                                                
+                                                
+                                                    <li key={index}>{ativ}</li>
+                                                
+                                                
+                                                
+                                            ))}</ul></td>
+                                    <td>{ativARR.dia}</td>
+                                    <td>{ativARR.horario}</td>
+                                    <td>{ativARR.hora_lanche}</td>
+                                    <td>{ativARR.grupo}</td>
+                                    <td><ul>{ativARR.alunos.map((aluno, index) => (
+                                                
+                                                
+                                                    <li key={index}>{aluno.nome}</li>
+                                                
+                                                
+                                                
+                                            ))}</ul></td>
+                                    
+                                    <td>{ativARR.sera_dividido?"Sim":"Não"}</td>
+                                    <td>{ativARR.tempo_acolhida}</td>
+                                    <td>{ativARR.resp_acolhida}</td>
+                                    <td>{ativARR.tempo_lanche}</td>
+                                    <td>{ativARR.resp_lanche}</td>
+                                    <td>{ativARR.tempo_saida}</td>
+                                    <td>{ativARR.resp_saida}</td>
+                                    <td>
+                                        <button onClick={()=>handleEditarClick(ativARR)}>
+                                            Editar
+                                        </button>
+                                        <button onClick={()=>removerAtividade(ativARR.id)}>
+                                            Remover
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))
+
+                            }
                         </tbody>
                     </table>
                     </div>
@@ -695,6 +753,9 @@ function CadastrarAtiv(){
                         }
                         {tabela && turno ==="Vespertino" &&(
                 <div className="table-container">
+                    <input type="search" value={termo} onChange={e=>{
+                        setTermo(e.target.value);
+                    }} placeholder="Pesquisar..."></input>
                     <table className="custom-table">
                         <thead>
                             <tr>
@@ -714,7 +775,7 @@ function CadastrarAtiv(){
                             </tr>
                         </thead>
                         <tbody>
-                            {ativVesp.map((ativARR) =>(
+                            {termo===""?ativVesp.map((ativARR) =>(
                                 <tr key={ativARR.id}>
                                     <td><ul>{ativARR.atividade.map((ativ, index) => (
                                                 
@@ -750,6 +811,45 @@ function CadastrarAtiv(){
                                     <button onClick={()=>removerAtividade(ativARR.id)}>
                                             Remover
                                     </button>
+                                    </td>
+                                </tr>
+                            )):pesqVesp.map((ativARR) =>(
+                                <tr key={ativARR.id}>
+                                    <td><ul>{ativARR.atividade.map((ativ, index) => (
+                                                
+                                                
+                                                    <li key={index}>{ativ}</li>
+                                                
+                                                
+                                                
+                                            ))}</ul></td>
+                                    <td>{ativARR.dia}</td>
+                                    <td>{ativARR.horario}</td>
+                                    <td>{ativARR.hora_lanche}</td>
+                                    <td>{ativARR.grupo}</td>
+                                    <td><ul>{ativARR.alunos.map((aluno, index) => (
+                                                
+                                                
+                                                    <li key={index}>{aluno.nome}</li>
+                                                
+                                                
+                                                
+                                            ))}</ul></td>
+                                    
+                                    <td>{ativARR.sera_dividido?"Sim":"Não"}</td>
+                                    <td>{ativARR.tempo_acolhida}</td>
+                                    <td>{ativARR.resp_acolhida}</td>
+                                    <td>{ativARR.tempo_lanche}</td>
+                                    <td>{ativARR.resp_lanche}</td>
+                                    <td>{ativARR.tempo_saida}</td>
+                                    <td>{ativARR.resp_saida}</td>
+                                    <td>
+                                        <button onClick={()=>handleEditarClick(ativARR)}>
+                                            Editar
+                                        </button>
+                                        <button onClick={()=>removerAtividade(ativARR.id)}>
+                                            Remover
+                                        </button>
                                     </td>
                                 </tr>
                             ))}

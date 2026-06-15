@@ -1,35 +1,33 @@
 
 let selectedPath = null;
 let opt = "Não"; 
-const delay = t => new Promise(res=>setTimeout(res, t));
+const caminho_config = window.electronAPI.pegarCaminho();
 async function initCheck() {
-  for(let i=1; i<=5;i++){
-    try {
-        
-        const response = await fetch('http://127.0.0.1:3000/url');
-        
-
-        if (response.ok) {
-          const data = await response.json();
-          console.log(data.length>0);
-          if(data.length>0){
-            window.electronAPI.send('bypass-setup-and-open-react');
-            return;
-          }
-        }
-      
-          
-      
-      }catch (error) {
-          console.error(error);
-          await delay(1500);
-          continue;
-      }}
+  try {
     
-       document.getElementById('status-screen').classList.add('hidden');
-       document.getElementById('upload-screen').classList.remove('hidden');
-       document.getElementById('prosseguir').classList.remove('hidden');
+  
+        if(!window.electronAPI.existe(caminho_config)){
+            document.getElementById('status-screen').classList.add('hidden');
+            document.getElementById('upload-screen').classList.remove('hidden');
+            document.getElementById('prosseguir').classList.remove('hidden');
+        }
+          const response = await fetch(caminho_config);
+          if(response.ok){
+            const dados = await response.json();
+            if(window.electronAPI.existe(dados.url)){ 
+              window.electronAPI.send('bypass-setup-and-open-react');
+              return;
+            }
+        }
+        } catch (error) {
+            console.error("Erro no carregamento:", error);
+            alert("Arquivo corrompido ou inexistente. Por favor, configure novamente.");
+            document.getElementById('status-screen').classList.add('hidden');
+            document.getElementById('upload-screen').classList.remove('hidden');
+            document.getElementById('prosseguir').classList.remove('hidden');
+        }
     }
+
     document.querySelectorAll('input[name="opt"]').forEach(radio => {
       radio.addEventListener('change', () => {
         const p = document.getElementById("parag");

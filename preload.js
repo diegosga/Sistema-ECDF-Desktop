@@ -1,8 +1,15 @@
 const { contextBridge, ipcRenderer } = require('electron');
-
+const fs = require('fs');
+const path = require("path");
 contextBridge.exposeInMainWorld('electronAPI', {
+  existe: (caminho)=>fs.existsSync(caminho),
+  
   send: (channel, ...args) => ipcRenderer.send(channel, ...args),
-  invoke: (channel, ...args) => ipcRenderer.invoke(channel, ...args)
-});
+  
+  pegarCaminho: () =>path.join(__dirname,"dist-electron", "config.json") ,
+
+  invoke: (channel, ...args) => ipcRenderer.invoke(channel, ...args),
+}
+);
 //o context bridge vai fazer uma ponte entre o html e o electron já que funções desse nao funcionam naquele
 

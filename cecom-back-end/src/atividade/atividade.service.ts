@@ -5,7 +5,26 @@ import * as XLSX from "xlsx";
 import * as fs from 'fs';
 import * as path from 'path';
 import { UrlService } from 'src/url/url.service';
-let caminho_excel;
+let caminho_config = path.join(__dirname, '..', '..','..','..', 'dist-electron','config.json');
+let caminho_excel:string;
+
+
+const pegarValor = async ()=>{
+            if(fs.existsSync(caminho_config)){
+             const response = fs.readFileSync(caminho_config, 'utf-8');
+             const config = JSON.parse(response);
+             if(config){
+                    caminho_excel = config.url;
+                    return caminho_excel;
+                }
+             else{
+                console.log("caminho não encontrado")
+                
+            }
+            };
+           }
+
+        
 
 const traduzir=(traduzido, traducao)=>{
     const colunas={
@@ -60,28 +79,11 @@ const traduzir=(traduzido, traducao)=>{
 export class AtividadeService {
 
     constructor (private prisma: PrismaService){
-          const pegarValor = async ()=>{
-
-             const response = await prisma.url.findFirst({
-                select:{
-                    url: true,
-                }
-             });
-             if(response!= null){
-                caminho_excel = response?.url;
-                return caminho_excel;
-             }
-             else{
-                console.log("caminho não encontrado")
-                
-            }
-            };
-            pegarValor().then((caminho_excel)=>{
-                if(caminho_excel){
-                    console.log(caminho_excel);
-                }
-            });
+          console.log(fs.existsSync(caminho_config));
+                  if(fs.existsSync(caminho_config)){
+                      pegarValor();
         }
+    }
 
         async create(data: AtividadeDTO){
             if (!fs.existsSync(caminho_excel)) {
