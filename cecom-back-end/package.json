@@ -80,5 +80,8 @@
     "test": "test"
   },
   "keywords": [],
-  "type": "commonjs"
+  "type": "commonjs",
+  "overrides": {
+    "ajv": "8.20.0"
+  }
 }

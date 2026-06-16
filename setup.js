@@ -21,7 +21,6 @@ async function initCheck() {
         }
         } catch (error) {
             console.error("Erro no carregamento:", error);
-            alert("Arquivo corrompido ou inexistente. Por favor, configure novamente.");
             document.getElementById('status-screen').classList.add('hidden');
             document.getElementById('upload-screen').classList.remove('hidden');
             document.getElementById('prosseguir').classList.remove('hidden');

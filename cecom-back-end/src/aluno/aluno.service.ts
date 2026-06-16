@@ -1,8 +1,6 @@
 import { Injectable, InternalServerErrorException} from '@nestjs/common';
 import { AlunoDTO } from './dto/aluno.dto';
 import { PrismaService } from 'src/database/prisma.service';
-import { UrlService } from '../url/url.service';
-
 import * as XLSX from "xlsx";
 import * as os from 'os';
 import * as fs from 'fs';
@@ -10,7 +8,7 @@ import * as path from 'path';
 
 
 //teste
-let caminho_config = path.join(__dirname, '..', '..','..','..', 'dist-electron','config.json');
+let caminho_config = path.join(String(process.env.USER_DATA_PATH), "config.json");
 let caminho_excel:string;
 
 

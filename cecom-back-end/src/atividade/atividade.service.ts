@@ -4,8 +4,7 @@ import { PrismaService } from 'src/database/prisma.service';
 import * as XLSX from "xlsx";
 import * as fs from 'fs';
 import * as path from 'path';
-import { UrlService } from 'src/url/url.service';
-let caminho_config = path.join(__dirname, '..', '..','..','..', 'dist-electron','config.json');
+let caminho_config = path.join(String(process.env.USER_DATA_PATH), "config.json");
 let caminho_excel:string;
 
 
@@ -91,7 +90,9 @@ export class AtividadeService {
                 }
                     const dadoExcel = {};
                     const wb = XLSX.readFile(caminho_excel);
-                    const nome = wb.SheetNames[1];
+                    let nome;
+                    const hora = parseInt(data.horario.split(":")[0]);
+                    hora<12?nome =  wb.SheetNames[1]:nome =  wb.SheetNames[2];
                     const sheet = wb.Sheets[nome];
                     
             
@@ -140,15 +141,17 @@ export class AtividadeService {
                     id,
                 }
             });
-
+            
             const ativTraduzida = {};
             const ativExisteTraduzida = {};
             const wb = XLSX.readFile(caminho_excel);
-            const nome = wb.SheetNames[1];
-            const sheet = wb.Sheets[nome];
-            const dadoExcel= XLSX.utils.sheet_to_json(sheet) as any [];
-
+            let nome;
+            let sheet;
             if(atividadeExiste){
+                const hora = parseInt(atividadeExiste.horario.split(":")[0]);
+                hora<12?nome =  wb.SheetNames[1]:nome =  wb.SheetNames[2];
+                sheet = wb.Sheets[nome];
+                const dadoExcel= XLSX.utils.sheet_to_json(sheet) as any [];
                 traduzir(data,ativTraduzida);
                 traduzir(atividadeExiste,ativExisteTraduzida);
                 
@@ -162,6 +165,7 @@ export class AtividadeService {
                 
 
                 const novo_arquivo= XLSX.utils.json_to_sheet(novosDados);
+                
                 wb.Sheets[nome] = novo_arquivo;
                 XLSX.writeFile(wb, caminho_excel);
 
@@ -186,14 +190,17 @@ export class AtividadeService {
             });
             const ativTraduzida = {};
             const wb = XLSX.readFile(caminho_excel);
-            const nome = wb.SheetNames[1];
-            const sheet = wb.Sheets[nome];
-            const dadoExcel = XLSX.utils.sheet_to_json(sheet) as any[];            
+            let nome;
+            
             if(atividadeExiste){
+                const hora = parseInt(atividadeExiste.horario.split(":")[0]);
+                hora<12?nome =  wb.SheetNames[1]:nome =  wb.SheetNames[2];
+                const sheet = wb.Sheets[nome];
+                const dadoExcel= XLSX.utils.sheet_to_json(sheet) as any [];
                 traduzir(atividadeExiste, ativTraduzida);
                 const deletado =dadoExcel.filter(linha=>{
                     return !Object.keys(linha).every(campo=>
-                        String(linha[linha[campo]]) ===String(ativTraduzida[campo])
+                        String(linha[campo]) ===String(ativTraduzida[campo])
                     )
                 });
                 const nova_plan = XLSX.utils.json_to_sheet(deletado);

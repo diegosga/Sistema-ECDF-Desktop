@@ -34,15 +34,13 @@
 /* Inputs */
 .cadastro-aluno input,select {
     width: 100%;
-    border: #e67e22;
-    padding: 12px 15px;
-    border: 2px solid #edeff2;
-    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #dcdde1;
+    border-radius: 6px;
     font-size: 1rem;
-    color: #2d3436;
-    background-color: #fdfdfd;
-    transition: all 0.3s ease;
-    box-sizing: border-box; /* Garante que o padding não quebre a largura */
+    background-color: #f9f9f9;
+    transition: border-color 0.3s ease;
 }
 
 /* Foco no Input */

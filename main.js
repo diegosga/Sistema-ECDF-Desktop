@@ -3,41 +3,13 @@ const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
 const xlsx = require('xlsx');
-const { exec,fork } = require('child_process');
+const { exec,fork,spawn } = require('child_process');
 let mainWindow;
 let backendProcess;
 const isProd = app.isPackaged;
 const caminho_env = path.join(__dirname,'.env');
 
-function startBackend() {
-   
-        
-            let envConfig = {};
-            if (fs.existsSync(caminho_env)) {
-            console.log(`[.env Encontrado]: Carregando variáveis de ${caminho_env}`);
-            envConfig = dotenv.parse(fs.readFileSync(caminho_env));
-        } else {
-    console.error(`[.env NÃO ENCONTRADO]: Caminho tentado: ${caminho_env}`);
-}
-            if (isProd) {
-                const backendPath = path.join(process.resourcesPath, 'cecom-back-end', 'dist','src', 'main.js');
-                                backendProcess = fork(backendPath, [], {
-                env: { 
-                ...process.env,
-                ...envConfig,   
-                NODE_ENV: 'production'
-            }
-                });
-            } else {
-      
-                backendProcess =exec('npm run start:dev', { cwd: path.join(__dirname, 'cecom-back-end') });
-            }
-
-            if (backendProcess.stdout) {
-                backendProcess.stdout.on('data', (data) => console.log(`[NestJS]: ${data}`));
-            }
-  }
-
+process.env.USER_DATA_PATH =app.getPath("userData");
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -68,7 +40,7 @@ function createWindow() {
   mainWindow.on('closed', () => (mainWindow = null));
 
 }
-  
+
 
  function createSetupWindow() {
   setupWindow  = new BrowserWindow({
@@ -85,13 +57,57 @@ function createWindow() {
   setupWindow.loadFile(path.join(__dirname, 'setup.html'));
 }
   
+
+function startBackend() {
+   
+        
+            let envConfig = {};
+            if (fs.existsSync(caminho_env)) {
+            console.log(`[.env Encontrado]: Carregando variáveis de ${caminho_env}`);
+            envConfig = dotenv.parse(fs.readFileSync(caminho_env));
+        } else {
+    console.error(`[.env NÃO ENCONTRADO]: Caminho tentado: ${caminho_env}`);
+}
+            if (isProd) {
+                const backendPath = path.join(process.resourcesPath, 'cecom-back-end', 'dist','src', 'main.js');
+                backendProcess = fork(backendPath, [], {
+                silent: true,
+                env: { 
+                ...process.env,
+                ...envConfig,   
+                NODE_ENV: 'production'
+            }
+                });
+            } else {
+      
+                backendProcess =spawn('npm',['run','start:dev'], { 
+                  cwd: path.join(__dirname, 'cecom-back-end'), 
+                  shell:true
+                });
+            }
+
+            if (backendProcess.stdout) {
+                backendProcess.stdout.on('data', (data) => {
+                  console.log(`[NestJS]: ${data}`);
+                  const carregou = data.toString().includes("NestApplication");
+                  if(carregou) createSetupWindow();
+              });
+            }
+  }
+
+
+
+  
+
 process.on('uncaughtException', function (err) {
   console.log(err);
 })
 
   ipcMain.on('bypass-setup-and-open-react', (event) => {
   console.log('[Electron] Banco de dados validado com sucesso. Abrindo interface principal.');
+  
   createWindow();
+
 });
 
 ipcMain.handle('open-file-dialog', async (event) => {
@@ -197,29 +213,31 @@ ipcMain.on('process-initial-file', async (event,opt, filePath) => {
                                                 "RESPONSAVEL PELO ACOMPANHAMENTO"
                                                 ]];          
                     const ws_alunos = xlsx.utils.aoa_to_sheet(dadosAlunos);
-                    const ws_ativ = xlsx.utils.aoa_to_sheet(dadosAtividades);
+                    const ws_ativ_mat = xlsx.utils.aoa_to_sheet(dadosAtividades);
+                    const ws_ativ_vesp = xlsx.utils.aoa_to_sheet(dadosAtividades);
                     const wb = xlsx.utils.book_new();
                     xlsx.utils.book_append_sheet(wb,ws_alunos,"Alunos");
-                    xlsx.utils.book_append_sheet(wb,ws_ativ,"Atividades");
+                    xlsx.utils.book_append_sheet(wb,ws_ativ_mat,"Atividades - Matutino");
+                    xlsx.utils.book_append_sheet(wb,ws_ativ_vesp,"Atividades - Vespertino");
                     const caminho_esp = path.join(filePath, "planilha_cecom.xlsx");
                     xlsx.writeFile(wb, caminho_esp);
                     filePath= caminho_esp;
                 }
                 app.addRecentDocument(filePath);
-                const cwd_config = path.join(__dirname,"dist-electron", "config.json");
+                const cwd_config = path.join(process.env.USER_DATA_PATH, "config.json");
                 const conteudo = JSON.stringify({url: filePath, vai_ser_usado: opt});
                 fs.writeFile(cwd_config, conteudo, (err)=>{
                    if(err)throw new Error(err.message || 'Erro enviar o arquivo');
                   createWindow();
+                  setupWindow.close();
                 });
-                if (mainWindow) setupWindow.close();
 });
    
 
 
 app.whenReady().then(() => {
   startBackend();
-  createSetupWindow();
+
 });
 
 app.on('window-all-closed', () => {

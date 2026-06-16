@@ -25,9 +25,9 @@
     color: #34495e;
 }
 
+
 .cadastro-ativ select, 
-.cadastro-ativ input[type='time'], 
-.cadastro-ativ input[type='text'] {
+.cadastro-ativ input {
     width: 100%;
     padding: 10px;
     margin-bottom: 10px;
@@ -44,6 +44,7 @@
     border-color: #3498db;
     background-color: #fff;
 }
+
 
 /* Estilização das Seções (Acolhida, Lanche, Saída) */
 .acolher-portao, .acompanhar-lanche, #saida {
@@ -63,7 +64,7 @@
     overflow-x: auto; /* Permite scroll horizontal se a tabela for muito grande */
     display: flex;
     justify-content: center;
-    margin-top: 20px;
+    margin-top: 40px;
     display: block;
     position:sticky;
 }

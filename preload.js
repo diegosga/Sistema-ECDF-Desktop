@@ -6,7 +6,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   
   send: (channel, ...args) => ipcRenderer.send(channel, ...args),
   
-  pegarCaminho: () =>path.join(__dirname,"dist-electron", "config.json") ,
+  pegarCaminho: () =>path.join(process.env.USER_DATA_PATH, "config.json") ,
 
   invoke: (channel, ...args) => ipcRenderer.invoke(channel, ...args),
 }

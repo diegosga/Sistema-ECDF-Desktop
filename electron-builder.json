@@ -1,6 +1,7 @@
 {
   "appId": "com.cecom.sistema",
   "productName": "Cadastro Cecom",
+  
   "directories": {
     "output": "dist-electron"
   },
@@ -14,19 +15,19 @@
     "package.json",
     "cecom-sistema/**",
     "index.html"
+    
 
 ],
   "extraResources": [
     "cecom-back-end/dist",
-    "cecom-back-end/node_modules",
-    "dist-electron"
-
+    "cecom-back-end/node_modules"
+    
   ],
   "mac": {
     "target": ["dmg"]
   },
   "win": {
-    "target": ["nsis"]
+    "target": ["NSIS"]
   },
   "linux": {
     "target": ["AppImage"]
