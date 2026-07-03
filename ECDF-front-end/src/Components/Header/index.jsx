@@ -5,7 +5,7 @@ export default function Header(){
         <div className="header">
             <Link to ='/'>Cadastrar Aluno</Link>
             <Link to = '/cadastrar-ativ'>Cadastrar Atividade</Link>
-            <Link to = '/atendimentos'>Atendimentos</Link>
+            {/*<Link to = '/atendimentos'>Atendimentos</Link>*/}
         </div>
     )
 }

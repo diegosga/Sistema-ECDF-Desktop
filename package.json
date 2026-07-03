@@ -1,13 +1,13 @@
 {
-  "name": "cecom-electron",
+  "name": "ECDF-Cadastro",
   "version": "1.0.0",
   "description": "",
   "main": "main.js",
   "scripts": {
     "dev": "concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
-    "start": "electron .",
-    "build:frontend": "cd cecom-sistema && npm install && npm run build",
-    "build:backend": "cd cecom-back-end && npm install && npx prisma migrate deploy && npx prisma generate && npm run build && npm prune --production",
+    "start": "electron-forge start",
+    "build:frontend": "cd ECDF-front-end && npm install && npm run build",
+    "build:backend": "cd ECDF-back-end && npm install && npx prisma migrate deploy && npx prisma generate && npm run build && npm prune --production",
     "prebuild": "npm run build:frontend && npm run build:backend",
     "build": "electron-builder"
   },
@@ -16,13 +16,25 @@
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
+    "@electron-forge/cli": "^7.11.2",
+    "@electron-forge/maker-deb": "^7.11.2",
+    "@electron-forge/maker-rpm": "^7.11.2",
+    "@electron-forge/maker-squirrel": "^7.11.2",
+    "@electron-forge/maker-zip": "^7.11.2",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.11.2",
+    "@electron-forge/plugin-fuses": "^7.11.2",
+    "@electron-forge/publisher-github": "^7.11.2",
+    "@electron/fuses": "^1.8.0",
     "electron": "^42.4.0",
-    "electron-builder": "^26.15.3"
+    "electron-builder": "^26.15.3",
+    "electron-installer-redhat": "^3.4.0"
   },
   "dependencies": {
     "@nestjs/core": "^11.1.27",
     "dotenv": "^17.4.2",
+    "electron-squirrel-startup": "^1.0.1",
     "electron-store": "^11.0.2",
+    "wine": "^0.9.13",
     "xlsx": "^0.18.5"
   }
 }

@@ -26,9 +26,10 @@
   "mac": {
     "target": ["dmg"]
   },
-  "win": {
-    "target": ["NSIS"]
-  },
+  "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
   "linux": {
     "target": ["AppImage"]
   }
